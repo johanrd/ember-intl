@@ -16,5 +16,6 @@ export function getDefaultConfig(): Config {
       translationsDir: 'translations',
     },
     lintRules: rules,
+    translationHelpers: [],
   };
 }

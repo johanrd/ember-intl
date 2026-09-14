@@ -20,5 +20,6 @@ test('utils | config | merge-configs > user config is undefined', function () {
       'no-missing-keys': true,
       'no-unused-keys': true,
     },
+    translationHelpers: [],
   });
 });

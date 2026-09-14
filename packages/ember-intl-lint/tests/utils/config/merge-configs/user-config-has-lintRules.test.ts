@@ -31,5 +31,6 @@ test('utils | config | merge-configs > user config has lintRules', function () {
       },
       'no-unused-keys': false,
     },
+    translationHelpers: [],
   });
 });

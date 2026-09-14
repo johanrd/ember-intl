@@ -78,3 +78,10 @@ cp -r "tests/fixtures/my-v2-app-with-namespace-from-folders/input" "tests/fixtur
 
 ./dist/bin/ember-intl-lint.js \
   --root "tests/fixtures/my-v2-app-with-namespace-from-folders/output"
+
+# Update fixtures
+rm -r "tests/fixtures/my-v2-app-with-translationHelpers/output"
+cp -r "tests/fixtures/my-v2-app-with-translationHelpers/input" "tests/fixtures/my-v2-app-with-translationHelpers/output"
+
+./dist/bin/ember-intl-lint.js \
+  --root "tests/fixtures/my-v2-app-with-translationHelpers/output"

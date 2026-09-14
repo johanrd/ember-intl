@@ -19,6 +19,7 @@ test('steps | analyze-project > edge case (lint rules are disabled)', async func
         'no-missing-keys': false,
         'no-unused-keys': false,
       },
+      translationHelpers: [],
     },
     fix: false,
     projectRoot: 'tmp/my-v2-app',

@@ -24,5 +24,6 @@ test('utils | config | merge-configs > user config has addonPaths', function () 
       'no-missing-keys': true,
       'no-unused-keys': true,
     },
+    translationHelpers: [],
   });
 });
