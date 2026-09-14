@@ -23,6 +23,11 @@ type UserConfig = Partial<{
     translationsDir: string;
   }>;
   lintRules: Partial<Record<LintRule, boolean | LintOptions>>;
+  translationHelpers: {
+    export: string;
+    kind: 't' | 'tKey';
+    source: string;
+  }[];
 }>;
 ```
 
@@ -84,3 +89,19 @@ export default {
 ```
 
 See [docs/lint-rules](./lint-rules) to learn more about each rule and the options that it supports.
+
+
+## translationHelpers
+
+By default, only `t` and `tKey` imported from `ember-intl` count as translation helpers. If your app translates through a module of its own (for example, a plain function that templates and utilities import), list it so that `no-missing-keys` and `no-unused-keys` see those keys.
+
+```js
+export default {
+  translationHelpers: [
+    { source: 'my-app/utils/intl', export: 't', kind: 't' },
+    { source: 'my-app/utils/translation-key', export: 'default', kind: 'tKey' },
+  ],
+};
+```
+
+`source` must match the import path exactly as written in your code. `export` is the name of a named export, or `'default'`. `kind` says whether the helper behaves like `t` or like `tKey`.

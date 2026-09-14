@@ -28,5 +28,12 @@ export function mergeConfigs(
     };
   }
 
+  if (userConfig.translationHelpers) {
+    config.translationHelpers = [
+      ...(config.translationHelpers ?? []),
+      ...userConfig.translationHelpers,
+    ];
+  }
+
   return config;
 }
