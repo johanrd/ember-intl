@@ -18,6 +18,7 @@ const options: Options = {
       'no-missing-keys': true,
       'no-unused-keys': true,
     },
+    translationHelpers: [],
   },
   fix: false,
   projectRoot: 'tmp/my-v2-app-with-addonPaths',

@@ -9,7 +9,7 @@ type Config = {
   addonPaths: string[];
   buildOptions: ConfigBuildOptions;
   lintRules: ConfigLintRules;
-  translationHelpers?: TranslationHelper[];
+  translationHelpers: TranslationHelper[];
 };
 
 type Options = {

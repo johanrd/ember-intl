@@ -20,6 +20,7 @@ const options: Options = {
         ignores: ['routes.index.key-to-overwrite'],
       },
     },
+    translationHelpers: [],
   },
   fix: false,
   projectRoot: 'tmp/my-v2-addon',

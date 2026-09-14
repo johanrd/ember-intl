@@ -15,5 +15,6 @@ test('utils | config | get-default-config > base case', function () {
       'no-missing-keys': true,
       'no-unused-keys': true,
     },
+    translationHelpers: [],
   });
 });

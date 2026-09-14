@@ -93,7 +93,7 @@ See [docs/lint-rules](./lint-rules) to learn more about each rule and the option
 
 ## translationHelpers
 
-By default, only `t` and `tKey` imported from `ember-intl` count as translation helpers. If your app translates through a module of its own (for example, a plain function that templates and utilities import), list it so that `no-missing-keys` and `no-unused-keys` see those keys.
+By default, the lint finds keys passed to `t` and `tKey` imported from `ember-intl`, and to `t` on the `intl` service. If your app translates through a module of its own (for example, a plain function that templates and utilities import), list it so that `no-missing-keys` and `no-unused-keys` see those keys.
 
 ```js
 export default {
