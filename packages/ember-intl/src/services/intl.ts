@@ -14,9 +14,13 @@ export type { Formats } from '../intl-state.ts';
 export default class IntlService extends Service {
   private _documentLocales?: Locales;
 
+  private static _state?: IntlState;
+
   private _timer?: EmberRunTimer;
 
-  state = new IntlState();
+  state: IntlState =
+    (this.constructor as typeof IntlService)._state ?? new IntlState();
+
   get locales(): IntlState['locales'] {
     return this.state.locales;
   }
@@ -86,14 +90,16 @@ export default class IntlService extends Service {
   }
 
   /**
-   * Returns a service class that uses the given state instead of its own.
-   * Code without an owner, like plain functions, can then read the same
-   * state as templates and classes that inject `intl`.
+   * Returns a subclass of this service class that uses the given state
+   * instead of its own. Code without an owner, like plain functions, can
+   * then read the same state as templates and classes that inject `intl`.
    */
-  static from(state: IntlState): typeof IntlService {
-    return class extends IntlService {
-      state = state;
-    };
+  static from<T extends typeof IntlService>(this: T, state: IntlState): T {
+    const ServiceWithState = class extends (this as typeof IntlService) {};
+
+    ServiceWithState._state = state;
+
+    return ServiceWithState as T;
   }
 
   getTranslation(
@@ -108,8 +114,12 @@ export default class IntlService extends Service {
     return this.state.setFormats(...args);
   }
 
-  setLocale(locale: Locales | string): void {
-    this.state.setLocale(locale);
+  setLocale(
+    ...args: Parameters<IntlState['setLocale']>
+  ): ReturnType<IntlState['setLocale']> {
+    const [locale] = args;
+
+    this.state.setLocale(...args);
 
     const proposedLocale = convertToArray(locale);
 
