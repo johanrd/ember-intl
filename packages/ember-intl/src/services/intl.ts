@@ -1,19 +1,15 @@
+import { registerDestructor } from '@ember/destroyable';
+import type Owner from '@ember/owner';
 import { cancel, next, type Timer as EmberRunTimer } from '@ember/runloop';
 import Service from '@ember/service';
 
 import { getHtmlElement } from '../-private/utils/get-html-element.ts';
-import {
-  convertToArray,
-  hasLocaleChanged,
-  type Locales,
-} from '../-private/utils/locale.ts';
+import { onLocaleChange } from '../-private/utils/locale-listeners.ts';
 import { IntlState } from '../intl-state.ts';
 
 export type { Formats } from '../intl-state.ts';
 
 export default class IntlService extends Service {
-  private _documentLocales?: Locales;
-
   private static _state?: IntlState;
 
   private _timer?: EmberRunTimer;
@@ -27,6 +23,25 @@ export default class IntlService extends Service {
 
   get primaryLocale(): IntlState['primaryLocale'] {
     return this.state.primaryLocale;
+  }
+
+  constructor(owner?: Owner) {
+    super(owner);
+
+    // The state may be shared and changed from outside this service, so the
+    // service follows its locale to keep the document's lang attribute in sync.
+    registerDestructor(
+      this,
+      onLocaleChange(this.state, () => {
+        // eslint-disable-next-line ember/no-runloop
+        cancel(this._timer);
+
+        // eslint-disable-next-line ember/no-runloop
+        this._timer = next(() => {
+          this.updateDocumentLanguage();
+        });
+      }),
+    );
   }
 
   addTranslations(
@@ -117,23 +132,7 @@ export default class IntlService extends Service {
   setLocale(
     ...args: Parameters<IntlState['setLocale']>
   ): ReturnType<IntlState['setLocale']> {
-    const [locale] = args;
-
-    this.state.setLocale(...args);
-
-    const proposedLocale = convertToArray(locale);
-
-    if (hasLocaleChanged(proposedLocale, this._documentLocales)) {
-      this._documentLocales = proposedLocale;
-
-      // eslint-disable-next-line ember/no-runloop
-      cancel(this._timer);
-
-      // eslint-disable-next-line ember/no-runloop
-      this._timer = next(() => {
-        this.updateDocumentLanguage();
-      });
-    }
+    return this.state.setLocale(...args);
   }
 
   setOnFormatjsError(

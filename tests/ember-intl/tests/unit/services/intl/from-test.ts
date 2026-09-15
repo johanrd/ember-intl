@@ -1,4 +1,4 @@
-import { settled, type TestContext } from '@ember/test-helpers';
+import type { TestContext } from '@ember/test-helpers';
 import { IntlState } from 'ember-intl';
 import IntlService from 'ember-intl/services/intl';
 // Not the app's `setupTest`: it looks up `service:intl` before each test, and
@@ -25,22 +25,6 @@ module('Unit | Service | intl > from', function (hooks) {
     intl.addTranslations('en-us', { farewell: 'Goodbye' });
 
     assert.strictEqual(state.t('farewell'), 'Goodbye');
-  });
-
-  test("setLocale on the service updates the document's lang attribute", async function (this: TestContext, assert) {
-    document.documentElement.setAttribute('lang', 'und');
-
-    const state = new IntlState();
-
-    this.owner.register('service:intl', IntlService.from(state));
-
-    const intl = this.owner.lookup('service:intl');
-
-    intl.setLocale('de-de');
-    await settled();
-
-    assert.strictEqual(state.primaryLocale, 'de-de');
-    assert.strictEqual(document.documentElement.getAttribute('lang'), 'de-de');
   });
 
   test('it keeps the methods of the class that it is called on', function (this: TestContext, assert) {

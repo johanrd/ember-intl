@@ -35,6 +35,7 @@ import {
   type Locales,
   normalizeLocale,
 } from './-private/utils/locale.ts';
+import { notifyLocaleChange } from './-private/utils/locale-listeners.ts';
 import type { TranslationJson } from './-private/utils/translations.ts';
 
 export type { Formats };
@@ -313,6 +314,8 @@ export class IntlState {
 
     if (hasLocaleChanged(proposedLocale, this._locales)) {
       this._locales = proposedLocale;
+
+      notifyLocaleChange(this, proposedLocale);
     }
 
     this.updateIntl(proposedLocale);
