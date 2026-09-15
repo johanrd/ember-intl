@@ -129,6 +129,10 @@ export const sidebar: DefaultTheme.Sidebar = [
         text: 'Organizing translations',
       },
       {
+        link: '/docs/advanced/plain-functions',
+        text: 'Plain functions',
+      },
+      {
         link: '/docs/advanced/polyfills',
         text: 'Polyfills',
       },

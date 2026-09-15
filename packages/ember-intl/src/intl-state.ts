@@ -1,0 +1,424 @@
+import { assert } from '@ember/debug';
+import { htmlSafe } from '@ember/template';
+import { tracked } from '@glimmer/tracking';
+
+import type {
+  FormatDateParameters,
+  FormatDateRangeParameters,
+  FormatDisplayNameParameters,
+  FormatListParameters,
+  FormatMessageParameters,
+  FormatNumberParameters,
+  FormatRelativeTimeParameters,
+  Formats,
+  FormatTimeParameters,
+  IntlShape,
+  OnErrorFn,
+} from './-private/formatjs/index.ts';
+import {
+  convertToFormatjsFormats,
+  createIntl,
+  createIntlCache,
+  formatDate,
+  formatDateRange,
+  formatDisplayName,
+  formatList,
+  formatMessage,
+  formatNumber,
+  formatRelativeTime,
+  formatTime,
+} from './-private/formatjs/index.ts';
+import {
+  convertToArray,
+  convertToString,
+  hasLocaleChanged,
+  type Locales,
+  normalizeLocale,
+} from './-private/utils/locale.ts';
+import { notifyLocaleChange } from './-private/utils/locale-listeners.ts';
+import type { TranslationJson } from './-private/utils/translations.ts';
+
+export type { Formats };
+
+type OnFormatjsError = (error: Parameters<OnErrorFn>[0]) => void;
+
+type OnMissingTranslation = (
+  key: string,
+  locales: Locales,
+  data?: Record<string, unknown>,
+) => string;
+
+const defaultOnFormatjsError: OnFormatjsError = (error) => {
+  switch (error.code) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+    case 'MISSING_DATA': {
+      console.warn(error.message);
+      break;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+    case 'MISSING_TRANSLATION': {
+      // Do nothing
+      break;
+    }
+
+    default: {
+      throw error;
+    }
+  }
+};
+
+const defaultOnMissingTranslation: OnMissingTranslation = (key, locales) => {
+  const locale = locales.join(', ');
+
+  return `Missing translation "${key}" for locale "${locale}"`;
+};
+
+/**
+ * The locales, translations and formatting behind the `intl` service,
+ * without an owner. An app can create one in a module, read it from
+ * plain functions, and give it to the service with `IntlService.from()`.
+ */
+export class IntlState {
+  @tracked private _intls: Record<string, IntlShape> = {};
+  @tracked private _locales?: Locales;
+
+  private _cache = createIntlCache();
+  private _formats: Formats = {};
+  private _onFormatjsError: OnFormatjsError = defaultOnFormatjsError;
+  private _onMissingTranslation: OnMissingTranslation =
+    defaultOnMissingTranslation;
+
+  private get _localesOrThrow(): Locales {
+    assert(
+      'No locales set. Did you call `intl.setLocale()`?',
+      this._locales?.length,
+    );
+
+    return this._locales;
+  }
+
+  get locales(): string[] {
+    return Object.keys(this._intls);
+  }
+
+  get primaryLocale(): string {
+    return this._localesOrThrow[0];
+  }
+
+  addTranslations(locale: string, translations: TranslationJson): void {
+    this.updateIntl(locale, translations);
+  }
+
+  private createIntl(
+    locale: Locales | string,
+    messages: Record<string, unknown> = {},
+  ): IntlShape {
+    const resolvedLocale = convertToString(locale);
+    const formats = convertToFormatjsFormats(this._formats);
+
+    return createIntl(
+      {
+        defaultFormats: formats,
+        defaultLocale: resolvedLocale,
+        formats,
+        locale: resolvedLocale,
+        // @ts-expect-error: Type 'Record<string, unknown>' is not assignable
+        messages,
+        onError: this._onFormatjsError,
+      },
+      this._cache,
+    );
+  }
+
+  exists(key: string, locale?: Locales | string): boolean {
+    const locales = locale ? convertToArray(locale) : this._localesOrThrow;
+
+    return locales.some((locale) => {
+      return this.getTranslation(key, locale) !== undefined;
+    });
+  }
+
+  formatDate(
+    value: FormatDateParameters[0] | null | undefined,
+    options?: FormatDateParameters[1] & {
+      locale?: string;
+    },
+  ): string {
+    if (value === undefined || value === null) {
+      return '';
+    }
+
+    const intlShape = this.getIntlShape(options?.locale);
+
+    return formatDate(intlShape, value, options);
+  }
+
+  formatDateRange(
+    from: FormatDateRangeParameters[0] | null | undefined,
+    to: FormatDateRangeParameters[1] | null | undefined,
+    options?: FormatDateRangeParameters[2] & {
+      locale?: string;
+    },
+  ): string {
+    if (from === undefined || from === null) {
+      return '';
+    }
+
+    if (to === undefined || to === null) {
+      return '';
+    }
+
+    const intlShape = this.getIntlShape(options?.locale);
+
+    return formatDateRange(intlShape, from, to, options);
+  }
+
+  formatDisplayName(
+    value: FormatDisplayNameParameters[0] | null | undefined,
+    options: FormatDisplayNameParameters[1] & {
+      locale?: string;
+    },
+  ): string {
+    if (value === undefined || value === null) {
+      return '';
+    }
+
+    const intlShape = this.getIntlShape(options?.locale);
+
+    return formatDisplayName(intlShape, value, options);
+  }
+
+  formatList(
+    value: FormatListParameters[0] | null | undefined,
+    options?: FormatListParameters[1] & {
+      locale?: string;
+    },
+  ): string {
+    if (value === undefined || value === null) {
+      return '';
+    }
+
+    const intlShape = this.getIntlShape(options?.locale);
+
+    return formatList(intlShape, value, options);
+  }
+
+  formatMessage(
+    value: FormatMessageParameters[0] | null | string | undefined,
+    options?: FormatMessageParameters[1] & {
+      htmlSafe?: boolean;
+      locale?: string;
+    },
+  ): string {
+    if (value === undefined || value === null) {
+      return '';
+    }
+
+    const intlShape = this.getIntlShape(options?.locale);
+
+    const descriptor =
+      typeof value === 'object'
+        ? value
+        : {
+            defaultMessage: value,
+            description: undefined,
+            id: value,
+          };
+
+    if (options?.htmlSafe) {
+      const output = formatMessage(intlShape, descriptor, options);
+
+      return htmlSafe(output) as unknown as string;
+    }
+
+    return formatMessage(intlShape, descriptor, options);
+  }
+
+  formatNumber(
+    value: FormatNumberParameters[0] | null | undefined,
+    options?: FormatNumberParameters[1] & {
+      locale?: string;
+    },
+  ): string {
+    if (value === undefined || value === null) {
+      return '';
+    }
+
+    const intlShape = this.getIntlShape(options?.locale);
+
+    return formatNumber(intlShape, value, options);
+  }
+
+  formatRelativeTime(
+    value: FormatRelativeTimeParameters[0] | null | undefined,
+    options?: FormatRelativeTimeParameters[2] & {
+      locale?: string;
+      unit?: FormatRelativeTimeParameters[1];
+    },
+  ): string {
+    if (value === undefined || value === null) {
+      return '';
+    }
+
+    const intlShape = this.getIntlShape(options?.locale);
+
+    return formatRelativeTime(intlShape, value, options?.unit, options);
+  }
+
+  formatTime(
+    value: FormatTimeParameters[0] | null | undefined,
+    options?: FormatTimeParameters[1] & {
+      locale?: string;
+    },
+  ): string {
+    if (value === undefined || value === null) {
+      return '';
+    }
+
+    const intlShape = this.getIntlShape(options?.locale);
+
+    return formatTime(intlShape, value, options);
+  }
+
+  private getIntl(locale: Locales | string): IntlShape | undefined {
+    const resolvedLocale = normalizeLocale(convertToString(locale));
+
+    return this._intls[resolvedLocale];
+  }
+
+  private getIntlShape(locale?: string): IntlShape {
+    if (locale) {
+      return this.createIntl(locale);
+    }
+
+    return this.getIntl(this._localesOrThrow)!;
+  }
+
+  getTranslation(key: string, locale: string): string | undefined {
+    const messages = this.getIntl(locale)?.messages;
+
+    if (!messages) {
+      return;
+    }
+
+    return messages[key] as string | undefined;
+  }
+
+  /**
+   * Returns the state to how a new one starts: no locales, translations or
+   * formats, and the default error and missing translation handlers. Use it
+   * between tests when the state lives in a module.
+   */
+  reset(): void {
+    this._intls = {};
+    this._locales = undefined;
+    this._cache = createIntlCache();
+    this._formats = {};
+    this._onFormatjsError = defaultOnFormatjsError;
+    this._onMissingTranslation = defaultOnMissingTranslation;
+
+    notifyLocaleChange(this, undefined);
+  }
+
+  setFormats(formats: Formats): void {
+    this._formats = formats;
+
+    // Call `updateIntl` to update `formats` for each locale
+    this.locales.forEach((locale) => {
+      this.updateIntl(locale, {});
+    });
+  }
+
+  setLocale(locale: Locales | string): void {
+    const proposedLocale = convertToArray(locale);
+
+    if (hasLocaleChanged(proposedLocale, this._locales)) {
+      this._locales = proposedLocale;
+
+      notifyLocaleChange(this, proposedLocale);
+    }
+
+    this.updateIntl(proposedLocale);
+  }
+
+  setOnFormatjsError(onFormatjsError: OnFormatjsError): void {
+    this._onFormatjsError = onFormatjsError;
+
+    // Call `updateIntl` to update `onError` for each locale
+    this.locales.forEach((locale) => {
+      this.updateIntl(locale, {});
+    });
+  }
+
+  setOnMissingTranslation(onMissingTranslation: OnMissingTranslation): void {
+    this._onMissingTranslation = onMissingTranslation;
+  }
+
+  t(
+    key: string,
+    options?: FormatMessageParameters[1] & {
+      htmlSafe?: boolean;
+      locale?: string;
+    },
+  ): string {
+    const locales: Locales = options?.locale
+      ? [options.locale]
+      : this._localesOrThrow;
+
+    let translation: string | undefined;
+
+    for (const locale of locales) {
+      translation = this.getTranslation(key, locale);
+
+      if (translation !== undefined) {
+        break;
+      }
+    }
+
+    if (translation === undefined) {
+      return this._onMissingTranslation(key, locales, options);
+    }
+
+    // Bypass @formatjs/intl
+    if (translation === '') {
+      return '';
+    }
+
+    return this.formatMessage(
+      {
+        defaultMessage: translation,
+        id: key,
+      },
+      options,
+    );
+  }
+
+  private updateIntl(
+    locale: Locales | string,
+    messages?: Record<string, unknown>,
+  ): void {
+    const resolvedLocale = normalizeLocale(convertToString(locale));
+    const intl = this._intls[resolvedLocale];
+
+    let newIntl;
+
+    if (!intl) {
+      newIntl = this.createIntl(resolvedLocale, messages);
+    } else if (messages) {
+      newIntl = this.createIntl(resolvedLocale, {
+        ...(intl.messages ?? {}),
+        ...messages,
+      });
+    }
+
+    if (!newIntl) {
+      return;
+    }
+
+    this._intls = {
+      ...this._intls,
+      [resolvedLocale]: newIntl,
+    };
+  }
+}
