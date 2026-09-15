@@ -48,6 +48,32 @@ type OnMissingTranslation = (
   data?: Record<string, unknown>,
 ) => string;
 
+const defaultOnFormatjsError: OnFormatjsError = (error) => {
+  switch (error.code) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+    case 'MISSING_DATA': {
+      console.warn(error.message);
+      break;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+    case 'MISSING_TRANSLATION': {
+      // Do nothing
+      break;
+    }
+
+    default: {
+      throw error;
+    }
+  }
+};
+
+const defaultOnMissingTranslation: OnMissingTranslation = (key, locales) => {
+  const locale = locales.join(', ');
+
+  return `Missing translation "${key}" for locale "${locale}"`;
+};
+
 /**
  * The locales, translations and formatting behind the `intl` service,
  * without an owner. An app can create one in a module, read it from
@@ -59,30 +85,9 @@ export class IntlState {
 
   private _cache = createIntlCache();
   private _formats: Formats = {};
-  private _onFormatjsError: OnFormatjsError = (error) => {
-    switch (error.code) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-      case 'MISSING_DATA': {
-        console.warn(error.message);
-        break;
-      }
-
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-      case 'MISSING_TRANSLATION': {
-        // Do nothing
-        break;
-      }
-
-      default: {
-        throw error;
-      }
-    }
-  };
-  private _onMissingTranslation: OnMissingTranslation = (key, locales) => {
-    const locale = locales.join(', ');
-
-    return `Missing translation "${key}" for locale "${locale}"`;
-  };
+  private _onFormatjsError: OnFormatjsError = defaultOnFormatjsError;
+  private _onMissingTranslation: OnMissingTranslation =
+    defaultOnMissingTranslation;
 
   private get _localesOrThrow(): Locales {
     assert(
@@ -298,6 +303,22 @@ export class IntlState {
     }
 
     return messages[key] as string | undefined;
+  }
+
+  /**
+   * Returns the state to how a new one starts: no locales, translations or
+   * formats, and the default error and missing translation handlers. Use it
+   * between tests when the state lives in a module.
+   */
+  reset(): void {
+    this._intls = {};
+    this._locales = undefined;
+    this._cache = createIntlCache();
+    this._formats = {};
+    this._onFormatjsError = defaultOnFormatjsError;
+    this._onMissingTranslation = defaultOnMissingTranslation;
+
+    notifyLocaleChange(this, undefined);
   }
 
   setFormats(formats: Formats): void {

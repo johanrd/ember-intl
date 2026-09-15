@@ -74,6 +74,19 @@ module("Unit | Service | intl > document's lang attribute", function (hooks) {
     assert.strictEqual(getLang(), 'en-us');
   });
 
+  test('a locale forgotten by reset is not applied', async function (this: TestContext, assert) {
+    const state = new IntlState();
+
+    state.setLocale('de-de');
+    state.reset();
+
+    this.owner.register('service:intl', IntlService.from(state));
+    this.owner.lookup('service:intl');
+    await settled();
+
+    assert.strictEqual(getLang(), 'und');
+  });
+
   test('a destroyed service no longer updates it', async function (this: TestContext, assert) {
     const state = new IntlState();
 
