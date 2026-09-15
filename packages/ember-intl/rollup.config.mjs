@@ -23,6 +23,7 @@ export default {
       'helpers/**/*.ts',
       'services/**/*.ts',
       'index.ts',
+      'intl-state.ts',
       'template-registry.ts',
       'test-support.ts',
     ]),

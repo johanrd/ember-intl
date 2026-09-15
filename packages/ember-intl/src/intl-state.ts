@@ -1,6 +1,4 @@
 import { assert } from '@ember/debug';
-import { cancel, next, type Timer as EmberRunTimer } from '@ember/runloop';
-import Service from '@ember/service';
 import { htmlSafe } from '@ember/template';
 import { tracked } from '@glimmer/tracking';
 
@@ -16,7 +14,7 @@ import type {
   FormatTimeParameters,
   IntlShape,
   OnErrorFn,
-} from '../-private/formatjs/index.ts';
+} from './-private/formatjs/index.ts';
 import {
   convertToFormatjsFormats,
   createIntl,
@@ -29,16 +27,15 @@ import {
   formatNumber,
   formatRelativeTime,
   formatTime,
-} from '../-private/formatjs/index.ts';
-import { getHtmlElement } from '../-private/utils/get-html-element.ts';
+} from './-private/formatjs/index.ts';
 import {
   convertToArray,
   convertToString,
   hasLocaleChanged,
   type Locales,
   normalizeLocale,
-} from '../-private/utils/locale.ts';
-import type { TranslationJson } from '../-private/utils/translations.ts';
+} from './-private/utils/locale.ts';
+import type { TranslationJson } from './-private/utils/translations.ts';
 
 export type { Formats };
 
@@ -50,7 +47,12 @@ type OnMissingTranslation = (
   data?: Record<string, unknown>,
 ) => string;
 
-export default class IntlService extends Service {
+/**
+ * The locales, translations and formatting behind the `intl` service,
+ * without an owner. An app can create one in a module, read it from
+ * plain functions, and give it to the service with `IntlService.from()`.
+ */
+export class IntlState {
   @tracked private _intls: Record<string, IntlShape> = {};
   @tracked private _locales?: Locales;
 
@@ -80,7 +82,6 @@ export default class IntlService extends Service {
 
     return `Missing translation "${key}" for locale "${locale}"`;
   };
-  private _timer?: EmberRunTimer;
 
   private get _localesOrThrow(): Locales {
     assert(
@@ -312,14 +313,6 @@ export default class IntlService extends Service {
 
     if (hasLocaleChanged(proposedLocale, this._locales)) {
       this._locales = proposedLocale;
-
-      // eslint-disable-next-line ember/no-runloop
-      cancel(this._timer);
-
-      // eslint-disable-next-line ember/no-runloop
-      this._timer = next(() => {
-        this.updateDocumentLanguage();
-      });
     }
 
     this.updateIntl(proposedLocale);
@@ -377,16 +370,6 @@ export default class IntlService extends Service {
     );
   }
 
-  private updateDocumentLanguage(): void {
-    const html = getHtmlElement(this);
-
-    if (!html) {
-      return;
-    }
-
-    html.setAttribute('lang', this.primaryLocale);
-  }
-
   private updateIntl(
     locale: Locales | string,
     messages?: Record<string, unknown>,
@@ -413,19 +396,5 @@ export default class IntlService extends Service {
       ...this._intls,
       [resolvedLocale]: newIntl,
     };
-  }
-
-  willDestroy(): void {
-    super.willDestroy();
-
-    // eslint-disable-next-line ember/no-runloop
-    cancel(this._timer);
-  }
-}
-
-// DO NOT DELETE: this is how TypeScript knows how to look up your services.
-declare module '@ember/service' {
-  interface Registry {
-    intl: IntlService;
   }
 }
