@@ -1,14 +1,18 @@
-import type { LintRule } from '../utils/lint-rules.js';
+import type {
+  Config,
+  TranslationHelper,
+  UserConfig,
+} from '@ember-intl/utils/config';
+import type { LintRule } from '@ember-intl/utils/lint-rules';
+import type {
+  Project as UpstreamProject,
+  ProjectTranslationData,
+  TranslationKey,
+} from '@ember-intl/utils/translations';
 
 type CodemodOptions = {
   fix: boolean;
   projectRoot: string;
-};
-
-type Config = {
-  addonPaths: string[];
-  buildOptions: ConfigBuildOptions;
-  lintRules: ConfigLintRules;
 };
 
 type Options = {
@@ -17,14 +21,6 @@ type Options = {
   projectRoot: string;
   src: 'addon' | 'app' | 'src';
 };
-
-type ConfigBuildOptions = {
-  fallbackLocale: string | undefined;
-  namespaceKeysByDir: boolean;
-  translationsDir: string;
-};
-
-type ConfigLintRules = Record<LintRule, boolean | LintOptions>;
 
 type IcuArguments = Record<IcuArgumentType, Set<string>>;
 
@@ -35,65 +31,32 @@ type LintErrors = string[];
 
 type LintMethod = (
   project: Project,
-  lintOptions: LintOptions,
+  lintRuleOptions: Record<string, unknown>,
   options: Options,
 ) => LintErrors | Promise<LintErrors>;
-
-type LintOptions = Record<string, unknown>;
 
 type LintResults = Record<LintRule, LintErrors>;
 
 type Locale = string;
 
-type Project = {
+type Project = UpstreamProject & {
   availableKeys: Map<TranslationKey, Map<Locale, ProjectTranslationData>>;
-  translationFiles: Map<
-    TranslationFilePath,
-    {
-      isInternal: boolean;
-      locale: Locale;
-      translationsDir: string;
-    }
-  >;
-  translations: Map<Locale, Map<TranslationKey, ProjectTranslationData>>;
   usedKeys: Set<TranslationKey>;
 };
 
-type ProjectTranslationData = {
-  filePath: TranslationFilePath;
-  message: TranslationMessage;
-};
-
-type TranslationFilePath = string;
-
-type TranslationJson = Record<TranslationKey, TranslationMessage>;
-
-type TranslationKey = string;
-
-type TranslationMessage = string;
-
-type UserConfig = Partial<{
-  addonPaths: string[];
-  buildOptions: Partial<ConfigBuildOptions>;
-  lintRules: Partial<ConfigLintRules>;
-}>;
-
 export type {
   CodemodOptions,
-  Config,
   IcuArguments,
   IcuArgumentType,
   LintErrors,
   LintMethod,
-  LintOptions,
   LintResults,
+  LintRule,
   Locale,
   Options,
   Project,
   ProjectTranslationData,
-  TranslationFilePath,
-  TranslationJson,
+  TranslationHelper,
   TranslationKey,
-  TranslationMessage,
   UserConfig,
 };

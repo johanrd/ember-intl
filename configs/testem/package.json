@@ -9,14 +9,14 @@
   },
   "author": "Isaac J. Lee",
   "type": "module",
-  "main": "index.cjs",
+  "main": "index.mjs",
   "scripts": {
     "lint": "prettier \"**/*.{cjs,mjs}\" --cache --check",
     "lint:fix": "prettier \"**/*.{cjs,mjs}\" --cache --write"
   },
   "devDependencies": {
     "@shared-configs/prettier": "workspace:*",
-    "prettier": "^3.9.6"
+    "prettier": "^3.9.9"
   },
   "engines": {
     "node": "22.* || >= 24"

@@ -2,6 +2,8 @@ allowBuilds:
   core-js: false
   unrs-resolver: false
 
+autoDedupe: true
+
 autoInstallPeers: false
 
 minimumReleaseAge: 720
@@ -9,10 +11,11 @@ minimumReleaseAge: 720
 minimumReleaseAgeExclude:
   - "@codemod-utils/*"
   - "@ijlee2-frontend-configs/*"
+  - "ember-testem"
 
 overrides:
   ember-cli-htmlbars: ^7.0.1
-  vite: ^8.2.2
+  vite: ^8.3.3
 
 packages:
   - "configs/**"
@@ -20,6 +23,7 @@ packages:
   - "packages/ember-intl"
   - "packages/ember-intl-lint"
   - "packages/ember-intl-update"
+  - "packages/ember-intl-utils"
   - "packages/ember-intl-v1-compat"
   - "packages/ember-intl-vite"
   - "tests/**"

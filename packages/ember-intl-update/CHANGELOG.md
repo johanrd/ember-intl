@@ -1,5 +1,29 @@
 # @ember-intl/update
 
+## 2.1.4
+
+### Patch Changes
+
+- [#2229](https://github.com/ember-intl/ember-intl/pull/2229) Updated latestVersions ([@ijlee2](https://github.com/ijlee2))
+
+## 2.1.3
+
+### Patch Changes
+
+- [#2223](https://github.com/ember-intl/ember-intl/pull/2223) Updated latestVersions ([@ijlee2](https://github.com/ijlee2))
+
+## 2.1.2
+
+### Patch Changes
+
+- [#2210](https://github.com/ember-intl/ember-intl/pull/2210) Updated latestVersions ([@ijlee2](https://github.com/ijlee2))
+
+## 2.1.1
+
+### Patch Changes
+
+- [#2208](https://github.com/ember-intl/ember-intl/pull/2208) Updated dependencies ([@ijlee2](https://github.com/ijlee2))
+
 ## 2.1.0
 
 ### Minor Changes

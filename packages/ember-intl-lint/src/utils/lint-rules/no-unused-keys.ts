@@ -8,20 +8,20 @@ import { LintRunWithIgnores } from './shared/index.js';
 
 export async function noUnusedKeys(
   project: Project,
-  lintOptions: Partial<{
-    ignores: TranslationKey[];
+  lintRuleOptions: Partial<{
+    ignores: (RegExp | TranslationKey)[];
   }>,
   options: Options,
 ): Promise<LintErrors> {
   const lintRun = new LintRunWithIgnores({
-    ignores: lintOptions.ignores,
+    ignores: lintRuleOptions.ignores,
     lintRule: 'no-unused-keys',
   });
 
   project.availableKeys.forEach((localeToData, key) => {
     if (project.usedKeys.has(key)) {
       return lintRun.record({
-        ignore: key,
+        key,
         status: 'pass',
       });
     }
@@ -38,13 +38,13 @@ export async function noUnusedKeys(
 
     if (isTranslationExternal) {
       return lintRun.record({
-        ignore: key,
+        key,
         status: 'pass',
       });
     }
 
     return lintRun.record({
-      ignore: key,
+      key,
       lintError: key,
       status: 'fail',
     });

@@ -16,7 +16,7 @@ module.exports = function (/* environment */) {
 
 :::
 
-For v2 apps, create `ember-intl.config.{js,mjs}` (ESM). The file must default-export an object, which may include `addonPaths`, `buildOptions`, and `lintRules`. Only `@ember-intl/lint` and `@ember-intl/vite` make use of this file.
+For v2 apps, create `ember-intl.config.{js,mjs,mts,ts}` (ESM). The file must default-export an object, which may include `addonPaths`, `buildOptions`, and `lintRules`. Only `@ember-intl/lint` and `@ember-intl/vite` make use of this file.
 
 ::: code-group
 
@@ -28,15 +28,39 @@ export default {
 };
 ```
 
+```ts [ember-intl.config.mts]
+import type { UserConfig } from 'ember-intl/config';
+
+export default {
+  buildOptions: {
+    fallbackLocale: 'en-us',
+  },
+} satisfies UserConfig;
+```
+
+```ts [ember-intl.config.{mjs,mts}]
+import { defineConfig } from 'ember-intl/config';
+
+export default defineConfig({
+  buildOptions: {
+    fallbackLocale: 'en-us',
+  },
+});
+```
+
 :::
 
 > [!TIP]
 > 
 > Only specify the key(s) whose default value you want to override. That is, your configuration file should easily show what's different about your app or addon.
 
+> [!TIP]
+>
+> `UserConfig` uses `Partial`'s, which can unintentionally allow `undefined`. In `tsconfig.json`, set `compilerOptions.exactOptionalPropertyTypes` to `true` for strict type checks.
+
 > [!NOTE]
 > 
-> Any app or addon that uses `@ember-intl/lint` can have `ember-intl.config.{js,mjs}`.
+> Any app or addon that uses `@ember-intl/lint` can have `ember-intl.config.{js,mjs,mts,ts}`.
 > 
 > As a result, v1 apps and v1 addons can have two configuration files with some duplicate code. Once you migrate a v1 app to v2, you can delete `config/ember-intl.js`. For v1 addons, delete `tests/dummy/config/ember-intl.js`.
 
@@ -47,10 +71,12 @@ To include an addon's translations, specify the relative path to the addon's roo
 
 ::: code-group
 
-```js [ember-intl.config.mjs]{2}
+```ts [ember-intl.config.mts]{4}
+import type { UserConfig } from 'ember-intl/config';
+
 export default {
   addonPaths: ['node_modules/my-v1-addon', 'node_modules/my-v2-addon'],
-};
+} satisfies UserConfig;
 ```
 
 :::
@@ -114,12 +140,14 @@ Copies the fallback locale's translation to all other locales' that are missing 
 
 ::: code-group
 
-```js [ember-intl.config.mjs]{3}
+```ts [ember-intl.config.mts]{5}
+import type { UserConfig } from 'ember-intl/config';
+
 export default {
   buildOptions: {
     fallbackLocale: 'en-us',
   },
-};
+} satisfies UserConfig;
 ```
 
 :::
@@ -131,12 +159,14 @@ Derives the key's namespace from the folder path. Can be used to separate transl
 
 ::: code-group
 
-```js [ember-intl.config.mjs]{3}
+```ts [ember-intl.config.mts]{5}
+import type { UserConfig } from 'ember-intl/config';
+
 export default {
   buildOptions: {
     namespaceKeysByDir: true,
   },
-};
+} satisfies UserConfig;
 ```
 
 :::
@@ -152,12 +182,14 @@ For example, if an app has stored them in `public/assets/translations`:
 
 ::: code-group
 
-```js [ember-intl.config.mjs]{3}
+```ts [ember-intl.config.mts]{5}
+import type { UserConfig } from 'ember-intl/config';
+
 export default {
   buildOptions: {
     translationsDir: 'public/assets/translations',
   },
-};
+} satisfies UserConfig;
 ```
 
 :::
@@ -183,28 +215,32 @@ To disable a rule, pass `false`.
 
 ::: code-group
 
-```js [ember-intl.config.mjs]{3}
+```ts [ember-intl.config.mts]{5}
+import type { UserConfig } from 'ember-intl/config';
+
 export default {
   lintRules: {
     'no-inconsistent-messages': false,
   },
-};
+} satisfies UserConfig;
 ```
 
 :::
 
-Lint rules may provide options (always configured as an object). For example, a rule may allow the `ignores` option so that you can ignore translation keys that fail. For simplicity, this option only supports exact matches.
+Lint rules may provide options (always configured as an object). For example, a rule may allow the `ignores` option so that you can ignore translation keys that fail.
 
 ::: code-group
 
-```js [ember-intl.config.mjs]{4}
+```ts [ember-intl.config.mts]{6}
+import type { UserConfig } from 'ember-intl/config';
+
 export default {
   lintRules: {
     'no-unused-keys': {
-      ignores: ['hello.message'],
+      ignores: ['hello.message', /^backend\.error\./],
     },
   },
-};
+} satisfies UserConfig;
 ```
 
 :::

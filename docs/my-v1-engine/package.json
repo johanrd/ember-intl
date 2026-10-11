@@ -1,6 +1,6 @@
 {
   "name": "my-v1-engine",
-  "version": "1.6.3",
+  "version": "1.8.2",
   "private": true,
   "description": "An engine with ember-intl",
   "keywords": [
@@ -32,8 +32,9 @@
     "test": "tests"
   },
   "scripts": {
-    "_build": "ember build --environment=production",
     "_prepack": "tsc --project tsconfig.declarations.json",
+    "build": "ember build --environment production",
+    "build:test": "ember build --environment test",
     "format": "prettier . --cache --write",
     "lint": "concurrently \"pnpm:lint:*(!fix)\" --names \"lint:\"",
     "lint:fix": "concurrently \"pnpm:lint:*:fix\" --names \"fix:\" && pnpm format",
@@ -44,7 +45,8 @@
     "lint:js:fix": "eslint . --fix",
     "lint:types": "glint",
     "start": "ember serve",
-    "test": "ember test --test-port 0"
+    "test": "pnpm build:test && ember-test --port 0",
+    "test:watch": "concurrently \"pnpm build:test --watch\" && \"pnpm ember-test --server\" --names build,test"
   },
   "dependencies": {
     "@babel/core": "^7.29.7",
@@ -58,7 +60,7 @@
     "@ember-intl/v1-compat": "workspace:*",
     "@ember/legacy-built-in-components": "^0.5.0",
     "@ember/optional-features": "^3.0.0",
-    "@ember/test-helpers": "^5.4.3",
+    "@ember/test-helpers": "^5.7.0",
     "@embroider/test-setup": "^4.0.0",
     "@glimmer/component": "^2.1.1",
     "@glimmer/tracking": "^1.1.2",
@@ -82,17 +84,18 @@
     "ember-engines": "^0.13.1",
     "ember-load-initializers": "^3.0.1",
     "ember-page-title": "^9.0.3",
-    "ember-qunit": "^9.1.0",
+    "ember-qunit": "^9.2.0",
     "ember-resolver": "^13.2.0",
     "ember-source": "~6.12.0",
     "ember-template-imports": "^4.4.0",
-    "eslint": "^10.9.1",
+    "ember-testem": "^0.3.2",
+    "eslint": "^10.12.0",
     "loader.js": "^4.7.0",
-    "prettier": "^3.9.6",
-    "qunit": "^2.26.0",
+    "prettier": "^3.9.9",
+    "qunit": "^3.0.0",
     "qunit-dom": "^3.6.0",
     "typescript": "^6.0.3",
-    "webpack": "^5.110.2"
+    "webpack": "^5.111.1"
   },
   "peerDependencies": {
     "ember-engines": "^0.13.0",

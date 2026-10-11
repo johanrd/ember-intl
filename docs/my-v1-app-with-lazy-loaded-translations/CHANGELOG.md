@@ -1,5 +1,41 @@
 # my-v1-app-with-lazy-loaded-translations
 
+## 1.11.2
+
+### Patch Changes
+
+- [#2227](https://github.com/ember-intl/ember-intl/pull/2227) Tested defineConfig and UserConfig ([@ijlee2](https://github.com/ijlee2))
+
+## 1.11.1
+
+### Patch Changes
+
+- [#2226](https://github.com/ember-intl/ember-intl/pull/2226) Enabled exactOptionalPropertyTypes ([@ijlee2](https://github.com/ijlee2))
+- [#2224](https://github.com/ember-intl/ember-intl/pull/2224) Updated dependencies ([@ijlee2](https://github.com/ijlee2))
+
+## 1.11.0
+
+### Minor Changes
+
+- [#2219](https://github.com/ember-intl/ember-intl/pull/2219) Converted ember-intl config to TypeScript ([@ijlee2](https://github.com/ijlee2))
+
+## 1.10.0
+
+### Minor Changes
+
+- [#2216](https://github.com/ember-intl/ember-intl/pull/2216) Installed ember-testem ([@ijlee2](https://github.com/ijlee2))
+
+### Patch Changes
+
+- [#2215](https://github.com/ember-intl/ember-intl/pull/2215) Updated dependencies ([@ijlee2](https://github.com/ijlee2))
+- [#2214](https://github.com/ember-intl/ember-intl/pull/2214) Standardized test setup ([@ijlee2](https://github.com/ijlee2))
+
+## 1.9.4
+
+### Patch Changes
+
+- [#2208](https://github.com/ember-intl/ember-intl/pull/2208) Updated dependencies ([@ijlee2](https://github.com/ijlee2))
+
 ## 1.9.3
 
 ### Patch Changes

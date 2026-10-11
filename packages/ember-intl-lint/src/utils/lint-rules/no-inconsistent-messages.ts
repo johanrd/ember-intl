@@ -27,13 +27,13 @@ function listLocales(locales: Set<Locale>): string {
 
 export async function noInconsistentMessages(
   project: Project,
-  lintOptions: Partial<{
-    ignores: TranslationKey[];
+  lintRuleOptions: Partial<{
+    ignores: (RegExp | TranslationKey)[];
   }>,
   options: Options,
 ): Promise<LintErrors> {
   const lintRun = new LintRunWithIgnores({
-    ignores: lintOptions.ignores,
+    ignores: lintRuleOptions.ignores,
     lintRule: 'no-inconsistent-messages',
   });
 
@@ -51,7 +51,7 @@ export async function noInconsistentMessages(
 
     if (localesWithMissingTranslation.size > 0) {
       return lintRun.record({
-        ignore: key,
+        key,
         lintError: `${key} (missing translation: ${listLocales(localesWithMissingTranslation)})`,
         status: 'fail',
       });
@@ -84,13 +84,13 @@ export async function noInconsistentMessages(
 
     if (localesWithInconsistentArguments.size === 0) {
       return lintRun.record({
-        ignore: key,
+        key,
         status: 'pass',
       });
     }
 
     return lintRun.record({
-      ignore: key,
+      key,
       lintError: `${key} (inconsistent arguments: ${listLocales(localesWithInconsistentArguments)})`,
       status: 'fail',
     });

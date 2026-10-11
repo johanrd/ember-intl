@@ -5,6 +5,7 @@ A configuration file is used to handle these cases:
 - Account for translations from addons
 - Account for build options
 - Configure lint rules
+- Recognize your own translation function
 
 To get started, create the file `ember-intl.config.{js,mjs}` in the root directory and default-export an object.
 
@@ -22,13 +23,31 @@ type UserConfig = Partial<{
     namespaceKeysByDir: boolean;
     translationsDir: string;
   }>;
-  lintRules: Partial<Record<LintRule, boolean | LintOptions>>;
+  lintRules: Partial<Record<LintRule, boolean | LintRuleOptions>>;
+  translationHelpers: readonly {
+    importName: string;
+    importPath: string;
+  }[];
 }>;
 ```
 
 > [!TIP]
 >
 > The same file is used for `@ember-intl/lint` and `@ember-intl/vite`. The `Partial`'s in the `UserConfig` mean, you only need to specify the object keys that you need.
+
+> [!TIP]
+>
+> Create the file `ember-intl.config.{mts,ts}` to get type checks.
+>
+> ```ts
+> import type { UserConfig } from 'ember-intl/config';
+>
+> export default {
+>   // ...
+> } satisfies UserConfig;
+> ```
+>
+> `UserConfig` uses `Partial`'s, which can unintentionally allow `undefined`. In `tsconfig.json`, set `compilerOptions.exactOptionalPropertyTypes` to `true` for strict type checks.
 
 
 ## addonPaths
@@ -71,16 +90,37 @@ export default {
 };
 ```
 
-Lint rules may provide options (always configured as an object). For example, a rule may allow the `ignores` option so that you can ignore translation keys that fail. For simplicity, this option only supports exact matches.
+Lint rules may provide options (always configured as an object). For example, a rule may allow the `ignores` option so that you can ignore translation keys that fail.
 
 ```js
 export default {
   lintRules: {
     'no-unused-keys': {
-      ignores: ['hello.message'],
+      ignores: ['hello.message', /^backend\.error\./],
     },
   },
 };
 ```
 
 See [docs/lint-rules](./lint-rules) to learn more about each rule and the options that it supports.
+
+## translationHelpers
+
+This option lets the linter recognize whichever translation function the config names, so it is no longer hard-coupled to ember-intl's own `t`.
+
+```js
+export default {
+  translationHelpers: [
+    { importName: 't', importPath: 'my-app/utils/intl' },
+    { importName: 'default', importPath: 'my-app/utils/translation-key' },
+  ],
+};
+```
+
+`importName` is a named export, or `'default'`. A helper listed here is treated like ember-intl's `t`. ember-intl's own `t`, `tKey` and the `intl` service stay recognized.
+
+Limitations:
+
+- `importPath` is matched exactly as written in your code, including any file extension.
+- The key must be the first argument, as a string, of a direct call (`t('key')`) or a helper in a `<template>` tag (`{{t "key"}}`).
+- Classic `.hbs` templates and namespace imports (`import * as intl from '...'`) are not covered.

@@ -14,7 +14,7 @@
       "*": ["./types/*"]
     },
     "rootDir": ".",
-    "types": ["ember-source/types"]
+    "types": ["@types/qunit", "ember-source/types"]
   },
   "glint": {
     "environment": ["ember-loose", "ember-template-imports"]
@@ -23,6 +23,7 @@
     "addon/**/*",
     "addon-test-support/**/*",
     "tests/**/*",
-    "types/**/*"
+    "types/**/*",
+    "*.mts"
   ]
 }

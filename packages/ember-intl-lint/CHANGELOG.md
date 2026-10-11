@@ -1,5 +1,50 @@
 # @ember-intl/lint
 
+## 2.3.2
+
+### Patch Changes
+
+- [#2228](https://github.com/ember-intl/ember-intl/pull/2228) Refactored code ([@ijlee2](https://github.com/ijlee2))
+
+## 2.3.1
+
+### Patch Changes
+
+- [#2225](https://github.com/ember-intl/ember-intl/pull/2225) Provided accurate types for lint rule options ([@ijlee2](https://github.com/ijlee2))
+- [#2225](https://github.com/ember-intl/ember-intl/pull/2225) Added missing type ([@ijlee2](https://github.com/ijlee2))
+- [#2224](https://github.com/ember-intl/ember-intl/pull/2224) Updated dependencies ([@ijlee2](https://github.com/ijlee2))
+
+## 2.3.0
+
+### Minor Changes
+
+- [#2219](https://github.com/ember-intl/ember-intl/pull/2219) Allowed ember-intl.config.{mts,ts} ([@ijlee2](https://github.com/ijlee2))
+- [#2219](https://github.com/ember-intl/ember-intl/pull/2219) Documented how to write ember-intl.config.{mts,ts} ([@ijlee2](https://github.com/ijlee2))
+
+## 2.2.0
+
+### Minor Changes
+
+- [#2218](https://github.com/ember-intl/ember-intl/pull/2218) Consumed utilities for translation files from @ember-intl/utils ([@ijlee2](https://github.com/ijlee2))
+- [#2217](https://github.com/ember-intl/ember-intl/pull/2217) Consumed types and utilities for config from @ember-intl/utils ([@ijlee2](https://github.com/ijlee2))
+
+## 2.1.0
+
+### Minor Changes
+
+- [#2212](https://github.com/ember-intl/ember-intl/pull/2212) Allowed ignores using regex ([@ijlee2](https://github.com/ijlee2))
+
+### Patch Changes
+
+- [#2211](https://github.com/ember-intl/ember-intl/pull/2211) Refactored LintRunWithIgnores ([@ijlee2](https://github.com/ijlee2))
+- [#2211](https://github.com/ember-intl/ember-intl/pull/2211) Added timestamp to discourage caching the user config across tests ([@ijlee2](https://github.com/ijlee2))
+
+## 2.0.3
+
+### Patch Changes
+
+- [#2208](https://github.com/ember-intl/ember-intl/pull/2208) Updated dependencies ([@ijlee2](https://github.com/ijlee2))
+
 ## 2.0.2
 
 ### Patch Changes

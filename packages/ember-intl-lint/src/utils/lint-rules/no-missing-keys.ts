@@ -8,26 +8,26 @@ import { LintRunWithIgnores } from './shared/index.js';
 
 export async function noMissingKeys(
   project: Project,
-  lintOptions: Partial<{
-    ignores: TranslationKey[];
+  lintRuleOptions: Partial<{
+    ignores: (RegExp | TranslationKey)[];
   }>,
   options: Options,
 ): Promise<LintErrors> {
   const lintRun = new LintRunWithIgnores({
-    ignores: lintOptions.ignores,
+    ignores: lintRuleOptions.ignores,
     lintRule: 'no-missing-keys',
   });
 
   project.usedKeys.forEach((key) => {
     if (project.availableKeys.has(key)) {
       return lintRun.record({
-        ignore: key,
+        key,
         status: 'pass',
       });
     }
 
     return lintRun.record({
-      ignore: key,
+      key,
       lintError: key,
       status: 'fail',
     });

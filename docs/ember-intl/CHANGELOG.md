@@ -1,5 +1,55 @@
 # docs-app-for-ember-intl
 
+## 2.19.2
+
+### Patch Changes
+
+- [#2227](https://github.com/ember-intl/ember-intl/pull/2227) Exported defineConfig and UserConfig from config.ts ([@ijlee2](https://github.com/ijlee2))
+- [#2227](https://github.com/ember-intl/ember-intl/pull/2227) Tested defineConfig and UserConfig ([@ijlee2](https://github.com/ijlee2))
+
+## 2.19.1
+
+### Patch Changes
+
+- [#2225](https://github.com/ember-intl/ember-intl/pull/2225) Recommended the use of exactOptionalPropertyTypes ([@ijlee2](https://github.com/ijlee2))
+- [#2224](https://github.com/ember-intl/ember-intl/pull/2224) Updated dependencies ([@ijlee2](https://github.com/ijlee2))
+
+## 2.19.0
+
+### Minor Changes
+
+- [#2219](https://github.com/ember-intl/ember-intl/pull/2219) Documented how to write ember-intl.config.{mts,ts} ([@ijlee2](https://github.com/ijlee2))
+- [#2219](https://github.com/ember-intl/ember-intl/pull/2219) Converted ember-intl config to TypeScript ([@ijlee2](https://github.com/ijlee2))
+
+## 2.18.0
+
+### Minor Changes
+
+- [#2217](https://github.com/ember-intl/ember-intl/pull/2217) Listed @ember-intl/utils in Changelogs ([@ijlee2](https://github.com/ijlee2))
+
+## 2.17.0
+
+### Minor Changes
+
+- [#2213](https://github.com/ember-intl/ember-intl/pull/2213) Renamed /test-helpers to /testing ([@ijlee2](https://github.com/ijlee2))
+- [#2213](https://github.com/ember-intl/ember-intl/pull/2213) Documented how to customize test setups ([@jrjohnson](https://github.com/jrjohnson))
+
+### Patch Changes
+
+- [#2215](https://github.com/ember-intl/ember-intl/pull/2215) Updated dependencies ([@ijlee2](https://github.com/ijlee2))
+
+## 2.16.2
+
+### Patch Changes
+
+- [#2212](https://github.com/ember-intl/ember-intl/pull/2212) Allowed ignores using regex ([@ijlee2](https://github.com/ijlee2))
+
+## 2.16.1
+
+### Patch Changes
+
+- [#2208](https://github.com/ember-intl/ember-intl/pull/2208) Updated dependencies ([@ijlee2](https://github.com/ijlee2))
+
 ## 2.16.0
 
 ### Minor Changes
