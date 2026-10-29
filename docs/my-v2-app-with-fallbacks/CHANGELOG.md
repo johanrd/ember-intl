@@ -1,5 +1,23 @@
 # my-v2-app-with-fallbacks
 
+## 1.10.6
+
+### Patch Changes
+
+- [#2239](https://github.com/ember-intl/ember-intl/pull/2239) Replaced lintRules with lintOptions.rules ([@ijlee2](https://github.com/ijlee2))
+
+## 1.10.5
+
+### Patch Changes
+
+- [#2236](https://github.com/ember-intl/ember-intl/pull/2236) Updated dependencies ([@ijlee2](https://github.com/ijlee2))
+
+## 1.10.4
+
+### Patch Changes
+
+- [#2234](https://github.com/ember-intl/ember-intl/pull/2234) Updated dependencies ([@ijlee2](https://github.com/ijlee2))
+
 ## 1.10.3
 
 ### Patch Changes

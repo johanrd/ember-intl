@@ -21,11 +21,20 @@ export function mergeConfigs(
     };
   }
 
-  if (userConfig.lintRules) {
-    config.lintRules = {
-      ...config.lintRules,
+  if (userConfig.lintOptions?.rules) {
+    config.lintOptions.rules = {
+      ...config.lintOptions.rules,
+      ...userConfig.lintOptions.rules,
+    };
+  } else if (userConfig.lintRules) {
+    config.lintOptions.rules = {
+      ...config.lintOptions.rules,
       ...userConfig.lintRules,
     };
+  }
+
+  if (userConfig.lintOptions?.dependencies) {
+    config.lintOptions.dependencies = userConfig.lintOptions.dependencies;
   }
 
   return config;
