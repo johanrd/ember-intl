@@ -6,6 +6,17 @@ import { findUserConfig } from './find-user-config.js';
 import { getDefaultConfig } from './get-default-config.js';
 import type { UserConfig } from './types.js';
 
+function isDependencyOptions(value: unknown): boolean {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'importName' in value &&
+    typeof value.importName === 'string' &&
+    'importPath' in value &&
+    typeof value.importPath === 'string'
+  );
+}
+
 function validate(
   userConfig: undefined | UserConfig,
 ): asserts userConfig is UserConfig {
@@ -25,7 +36,54 @@ function validate(
     });
   }
 
-  if (userConfig.lintRules) {
+  if (userConfig.lintOptions) {
+    const lintOptions = new Set(Object.keys(defaultConfig.lintOptions));
+
+    Object.keys(userConfig.lintOptions).forEach((lintOption) => {
+      if (!lintOptions.has(lintOption)) {
+        throw new Error(`unknown lint option: ${lintOption}`);
+      }
+    });
+  }
+
+  if (userConfig.lintOptions?.dependencies) {
+    const dependencies = new Set(
+      Object.keys(defaultConfig.lintOptions.dependencies),
+    );
+
+    Object.entries(userConfig.lintOptions.dependencies).forEach(
+      ([dependency, dependencyOptions]) => {
+        if (!dependencies.has(dependency)) {
+          throw new Error(`unknown dependency: ${dependency}`);
+        }
+
+        if (dependencyOptions === undefined) {
+          return;
+        }
+
+        if (
+          !Array.isArray(dependencyOptions) ||
+          !dependencyOptions.every(isDependencyOptions)
+        ) {
+          throw new Error(
+            `invalid dependency: ${dependency} (expected an array of { importName, importPath })`,
+          );
+        }
+      },
+    );
+  }
+
+  if (userConfig.lintOptions?.rules) {
+    Object.keys(userConfig.lintOptions.rules).forEach((lintRule) => {
+      if (!lintRules.includes(lintRule as LintRule)) {
+        throw new Error(`unknown lint rule: ${lintRule}`);
+      }
+    });
+  } else if (userConfig.lintRules) {
+    console.warn(
+      'DEPRECATION: In ember-intl.config.{mjs,mts}, the key `lintRules` will be replaced by `lintOptions.rules` in @ember-intl/lint@3.0.0. You can rename the key now to ease migration.',
+    );
+
     Object.keys(userConfig.lintRules).forEach((lintRule) => {
       if (!lintRules.includes(lintRule as LintRule)) {
         throw new Error(`unknown lint rule: ${lintRule}`);

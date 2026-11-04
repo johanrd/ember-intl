@@ -21,10 +21,24 @@ export function mergeConfigs(
     };
   }
 
-  if (userConfig.lintRules) {
-    config.lintRules = {
-      ...config.lintRules,
+  if (userConfig.lintOptions?.rules) {
+    config.lintOptions.rules = {
+      ...config.lintOptions.rules,
+      ...userConfig.lintOptions.rules,
+    };
+  } else if (userConfig.lintRules) {
+    config.lintOptions.rules = {
+      ...config.lintOptions.rules,
       ...userConfig.lintRules,
+    };
+  }
+
+  if (userConfig.lintOptions?.dependencies) {
+    const { dependencies } = userConfig.lintOptions;
+
+    config.lintOptions.dependencies = {
+      t: dependencies.t ?? config.lintOptions.dependencies.t,
+      tKey: dependencies.tKey ?? config.lintOptions.dependencies.tKey,
     };
   }
 

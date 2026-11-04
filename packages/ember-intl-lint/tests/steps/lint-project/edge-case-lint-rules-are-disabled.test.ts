@@ -14,10 +14,22 @@ test('steps | lint-project > edge-case (lint rules are disabled)', async functio
         namespaceKeysByDir: false,
         translationsDir: 'translations',
       },
-      lintRules: {
-        'no-inconsistent-messages': false,
-        'no-missing-keys': false,
-        'no-unused-keys': false,
+      lintOptions: {
+        dependencies: {
+          t: [
+            { importName: 't', importPath: 'ember-intl' },
+            { importName: 'default', importPath: 'ember-intl/helpers/t' },
+          ],
+          tKey: [
+            { importName: 'tKey', importPath: 'ember-intl' },
+            { importName: 'default', importPath: 'ember-intl/helpers/t-key' },
+          ],
+        },
+        rules: {
+          'no-inconsistent-messages': false,
+          'no-missing-keys': false,
+          'no-unused-keys': false,
+        },
       },
     },
     fix: false,

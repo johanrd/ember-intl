@@ -1,5 +1,12 @@
 import type { LintRules } from '../lint-rules.js';
 
+type Dependency = 't' | 'tKey';
+
+type DependencyOptions = {
+  importName: string;
+  importPath: string;
+};
+
 export type Config = {
   addonPaths: string[];
   buildOptions: {
@@ -7,11 +14,18 @@ export type Config = {
     namespaceKeysByDir: boolean;
     translationsDir: string;
   };
-  lintRules: LintRules;
+  lintOptions: {
+    dependencies: Record<Dependency, DependencyOptions[]>;
+    rules: LintRules;
+  };
 };
 
 export type UserConfig = Partial<{
   addonPaths: Config['addonPaths'];
   buildOptions: Partial<Config['buildOptions']>;
-  lintRules: Partial<Config['lintRules']>;
+  lintOptions: Partial<{
+    dependencies: Partial<Record<Dependency, DependencyOptions[]>>;
+    rules: Partial<Config['lintOptions']['rules']>;
+  }>;
+  lintRules: Partial<LintRules>;
 }>;
