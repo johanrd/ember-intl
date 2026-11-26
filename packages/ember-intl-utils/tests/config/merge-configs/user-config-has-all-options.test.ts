@@ -27,12 +27,24 @@ test('src | config | merge-configs > user config has all options', function () {
       namespaceKeysByDir: true,
       translationsDir: 'public/assets/translations',
     },
-    lintRules: {
-      'no-inconsistent-messages': true,
-      'no-missing-keys': {
-        ignores: ['hello.message'],
+    lintOptions: {
+      dependencies: {
+        t: [
+          { importName: 't', importPath: 'ember-intl' },
+          { importName: 'default', importPath: 'ember-intl/helpers/t' },
+        ],
+        tKey: [
+          { importName: 'tKey', importPath: 'ember-intl' },
+          { importName: 'default', importPath: 'ember-intl/helpers/t-key' },
+        ],
       },
-      'no-unused-keys': false,
+      rules: {
+        'no-inconsistent-messages': true,
+        'no-missing-keys': {
+          ignores: ['hello.message'],
+        },
+        'no-unused-keys': false,
+      },
     },
   });
 });

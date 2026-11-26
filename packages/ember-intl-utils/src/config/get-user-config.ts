@@ -25,7 +25,39 @@ function validate(
     });
   }
 
-  if (userConfig.lintRules) {
+  if (userConfig.lintOptions) {
+    const lintOptions = new Set(Object.keys(defaultConfig.lintOptions));
+
+    Object.keys(userConfig.lintOptions).forEach((lintOption) => {
+      if (!lintOptions.has(lintOption)) {
+        throw new Error(`unknown lint option: ${lintOption}`);
+      }
+    });
+  }
+
+  if (userConfig.lintOptions?.dependencies) {
+    const dependencies = new Set(
+      Object.keys(defaultConfig.lintOptions.dependencies),
+    );
+
+    Object.keys(userConfig.lintOptions.dependencies).forEach((dependency) => {
+      if (!dependencies.has(dependency)) {
+        throw new Error(`unknown dependency: ${dependency}`);
+      }
+    });
+  }
+
+  if (userConfig.lintOptions?.rules) {
+    Object.keys(userConfig.lintOptions.rules).forEach((lintRule) => {
+      if (!lintRules.includes(lintRule as LintRule)) {
+        throw new Error(`unknown lint rule: ${lintRule}`);
+      }
+    });
+  } else if (userConfig.lintRules) {
+    console.warn(
+      'DEPRECATION: In ember-intl.config.{mjs,mts}, the key `lintRules` will be replaced by `lintOptions.rules` in @ember-intl/lint@3.0.0. You can rename the key now to ease migration.',
+    );
+
     Object.keys(userConfig.lintRules).forEach((lintRule) => {
       if (!lintRules.includes(lintRule as LintRule)) {
         throw new Error(`unknown lint rule: ${lintRule}`);

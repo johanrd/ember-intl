@@ -1,3 +1,5 @@
+import { getDefaultConfig, mergeConfigs } from '@ember-intl/utils/config';
+
 import type { CodemodOptions, Options } from '../../../src/types/index.js';
 
 const codemodOptions: CodemodOptions = {
@@ -6,40 +8,36 @@ const codemodOptions: CodemodOptions = {
 };
 
 const options: Options = {
-  config: {
-    addonPaths: [],
-    buildOptions: {
-      fallbackLocale: undefined,
-      namespaceKeysByDir: false,
-      translationsDir: 'translations',
-    },
-    lintRules: {
-      'no-inconsistent-messages': {
-        ignores: [
-          'components.translation-with-arguments.message',
-          /^routes\.index\./,
-          /^routes\.application\./,
-          /\.title$/,
-          /\.message$/,
-        ],
-      },
-      'no-missing-keys': {
-        ignores: [
-          /^routes\.application\./,
-          'components.title',
-          'routes.application.title',
-          'routes.index.key-to-overwrite',
-          'routes.index.title',
-        ],
-      },
-      'no-unused-keys': {
-        ignores: [
-          'components.title',
-          /^components\.translation-with-arguments\./,
-        ],
+  config: mergeConfigs(getDefaultConfig(), {
+    lintOptions: {
+      rules: {
+        'no-inconsistent-messages': {
+          ignores: [
+            'components.translation-with-arguments.message',
+            /^routes\.index\./,
+            /^routes\.application\./,
+            /\.title$/,
+            /\.message$/,
+          ],
+        },
+        'no-missing-keys': {
+          ignores: [
+            /^routes\.application\./,
+            'components.title',
+            'routes.application.title',
+            'routes.index.key-to-overwrite',
+            'routes.index.title',
+          ],
+        },
+        'no-unused-keys': {
+          ignores: [
+            'components.title',
+            /^components\.translation-with-arguments\./,
+          ],
+        },
       },
     },
-  },
+  }),
   fix: true,
   projectRoot: 'tmp/my-v2-app-fix-2',
   src: 'app',

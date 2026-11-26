@@ -1,6 +1,6 @@
 {
   "name": "docs-app-for-ember-intl",
-  "version": "2.19.3",
+  "version": "2.19.7",
   "private": true,
   "description": "Docs app for ember-intl",
   "homepage": "https://ember-intl.github.io/ember-intl",
@@ -30,22 +30,22 @@
   "devDependencies": {
     "@ember-intl/lint": "workspace:*",
     "@ember-intl/vite": "workspace:*",
-    "@glimmer/component": "^2.1.1",
+    "@glimmer/component": "^2.2.1",
     "@shared-configs/eslint-config-node": "workspace:*",
     "@shared-configs/prettier": "workspace:*",
     "@shared-configs/stylelint": "workspace:*",
     "@shared-configs/typescript": "workspace:*",
-    "concurrently": "^10.0.6",
+    "concurrently": "^10.0.7",
     "ember-intl": "workspace:*",
-    "ember-source": "~7.3.1",
-    "eslint": "^10.13.0",
-    "oxc-minify": "^0.155.0",
-    "prettier": "^3.9.10",
-    "stylelint": "^17.16.0",
+    "ember-source": "~7.4.0",
+    "eslint": "^10.15.0",
+    "oxc-minify": "^0.159.0",
+    "prettier": "^3.10.1",
+    "stylelint": "^18.0.0",
     "typescript": "^6.0.3",
-    "vite": "^8.3.4",
-    "vite-plugin-ember": "^0.8.2",
-    "vitepress": "^2.0.0-alpha.20"
+    "vite": "^8.3.8",
+    "vite-plugin-ember": "^0.9.1",
+    "vitepress": "^2.0.0-alpha.21"
   },
   "engines": {
     "node": "22.* || >= 24"
